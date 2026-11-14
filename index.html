@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" type="image/png" href="favicon.png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- TAMBAHKAN BARIS INI UNTUK HEATMAP -->
+<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-matrix@2.0.1/dist/chartjs-chart-matrix.min.js"></script>
 </head>
 <body>
 
@@ -82,6 +84,15 @@
                 </div>
             </div>
         </div>
+                <!-- TAMBAHAN HEATMAP -->
+        <div class="chart-box" style="margin-top: 24px;">
+            <h4>Heatmap Waktu Kejadian Tidak Normal (Tanggal vs Jam)</h4>
+            <div class="canvas-container" style="height: 400px;">
+                <canvas id="chartHeatmap"></canvas>
+            </div>
+            <p style="text-align: center; font-size: 12px; color: #666; margin-top: 10px;">Warna merah menandakan penumpukan kejadian abnormal.</p>
+        </div>
+
 
         <!-- TABEL DETAIL (Tambahan Baru) -->
         <div class="chart-box" style="margin-top: 24px;">

@@ -3,6 +3,7 @@ const API_BASE_URL = '/api'; // Untuk Vercel
 let chartKapalInstance = null;
 let chartPelanggaranInstance = null;
 let chartScatterInstance = null;
+let chartHeatmapInstance = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     loadAllData();
@@ -24,7 +25,8 @@ function loadAllData() {
     fetchKPI(kapalId, tanggal);
     fetchCharts(kapalId, tanggal);
     fetchTable(kapalId, tanggal);
-    fetchScatter(kapalId, tanggal); // <-- TAMBAHKAN INI
+    fetchScatter(kapalId, tanggal);
+    fetchHeatmap(kapalId, tanggal); // <-- TAMBAHKAN INI
 }
 
 function fetchKPI(kapalId, tanggal) {
@@ -174,6 +176,91 @@ function renderScatter(data) {
                     callbacks: {
                         label: function(context) {
                             return `${context.dataset.label}: Arus ${context.parsed.x} A, THD ${context.parsed.y}%`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// 5. Fetch dan Render Heatmap
+function fetchHeatmap(kapalId, tanggal) {
+    let url = `${API_BASE_URL}/heatmap?kapal=${kapalId}`;
+    if (tanggal) url += `&tanggal=${tanggal}`;
+
+    fetch(url)
+        .then(res => res.json())
+        .then(data => {
+            renderHeatmap(data);
+        })
+        .catch(error => console.error('Error fetching Heatmap:', error));
+}
+
+function renderHeatmap(data) {
+    const ctx = document.getElementById('chartHeatmap').getContext('2d');
+    if (chartHeatmapInstance) chartHeatmapInstance.destroy();
+
+    // Menyiapkan label tanggal unik dan label jam (0-23)
+    const uniqueDates = [...new Set(data.map(d => d.tanggal))].sort();
+    const hours = Array.from({length: 24}, (_, i) => i.toString().padStart(2, '0') + ':00');
+
+    // Mengubah data ke format yang diminta Chart.js Matrix
+    const heatmapData = data.map(d => ({
+        x: uniqueDates.indexOf(d.tanggal),
+        y: parseInt(d.jam),
+        v: parseInt(d.jumlah)
+    }));
+
+    // Mencari nilai maksimum untuk menentukan skala warna
+    const maxVal = Math.max(...heatmapData.map(d => d.v), 1);
+
+    chartHeatmapInstance = new Chart(ctx, {
+        type: 'matrix',
+        data: {
+            datasets: [{
+                label: 'Jumlah Kejadian',
+                data: heatmapData,
+                backgroundColor(c) {
+                    const value = c.dataset.data[c.dataIndex].v;
+                    // Warna dari kuning (rendah) ke merah (tinggi)
+                    const alpha = (value / maxVal);
+                    return `rgba(229, 62, 62, ${alpha})`; // Merah dengan transparansi
+                },
+                borderColor: '#fff',
+                borderWidth: 1,
+                width: ({chart}) => (chart.chartArea || {}).width / uniqueDates.length - 1,
+                height: ({chart}) => (chart.chartArea || {}).height / 24 - 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    type: 'category',
+                    labels: uniqueDates,
+                    title: { display: true, text: 'Tanggal' },
+                    grid: { display: false }
+                },
+                y: {
+                    type: 'category',
+                    labels: hours,
+                    title: { display: true, text: 'Jam' },
+                    grid: { display: false },
+                    reverse: true // Agar jam 00:00 ada di atas
+                }
+            },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        title: () => 'Detail Kejadian',
+                        label: (context) => {
+                            const v = context.raw.v;
+                            const tgl = uniqueDates[context.raw.x];
+                            const jam = hours[context.raw.y];
+                            return `${tgl} jam ${jam}: ${v} kejadian abnormal`;
                         }
                     }
                 }
