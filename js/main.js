@@ -34,12 +34,21 @@ function fetchKPI(kapalId) {
 
 // 2. Fetch Charts
 function fetchCharts(kapalId) {
-    fetch(`${API_BASE_URL}/charts.js?kapal=${kapalId}`)
-        .then(res => res.json())
+    fetch(`${API_BASE_URL}/charts?kapal=${kapalId}`)
+        .then(res => {
+            if (!res.ok) throw new Error("Gagal mengambil data grafik");
+            return res.json();
+        })
         .then(data => {
-            renderStackedBar(data.status_per_kapal);
-            renderHorizontalBar(data.pelanggaran_parameter);
-        });
+            // Pastikan data tidak kosong sebelum dirender
+            if (data && data.status_per_kapal) {
+                renderStackedBar(data.status_per_kapal);
+            }
+            if (data && data.pelanggaran_parameter) {
+                renderHorizontalBar(data.pelanggaran_parameter);
+            }
+        })
+        .catch(error => console.error('Error fetching Charts:', error));
 }
 
 // 3. Fetch Tabel Detail
@@ -78,31 +87,22 @@ function fetchTable(kapalId) {
 }
 
 // 4. Render Grafik (Destroy instance lama agar tidak tumpang tindih)
-function renderStackedBar(data) {
-    const ctx = document.getElementById('chartKapal').getContext('2d');
-    if (chartKapalInstance) chartKapalInstance.destroy();
-
-    const labels = Object.keys(data);
-    const datasetNormal = [], datasetPeringatan = [], datasetBahaya = [];
-
-    labels.forEach(kapal => {
-        datasetNormal.push(data[kapal]['Normal']);
-        datasetPeringatan.push(data[kapal]['Peringatan']);
-        datasetBahaya.push(data[kapal]['Bahaya']);
-    });
-
-    chartKapalInstance = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [
-                { label: 'Normal', data: datasetNormal, backgroundColor: '#38a169' },
-                { label: 'Peringatan', data: datasetPeringatan, backgroundColor: '#ecc94b' },
-                { label: 'Bahaya', data: datasetBahaya, backgroundColor: '#e53e3e' }
-            ]
-        },
-        options: { responsive: true, maintainAspectRatio: false, scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } } }
-    });
+function fetchCharts(kapalId) {
+    fetch(`${API_BASE_URL}/charts?kapal=${kapalId}`)
+        .then(res => {
+            if (!res.ok) throw new Error("Gagal mengambil data grafik");
+            return res.json();
+        })
+        .then(data => {
+            // Pastikan data tidak kosong sebelum dirender
+            if (data && data.status_per_kapal) {
+                renderStackedBar(data.status_per_kapal);
+            }
+            if (data && data.pelanggaran_parameter) {
+                renderHorizontalBar(data.pelanggaran_parameter);
+            }
+        })
+        .catch(error => console.error('Error fetching Charts:', error));
 }
 
 function renderHorizontalBar(data) {
