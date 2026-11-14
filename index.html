@@ -1,0 +1,100 @@
+<!-- index.php -->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Kualitas Daya - Skenario C</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <!-- HEADER & FILTER -->
+        <div class="header">
+            <div>
+                <h1>Main Switchboard Power Quality Monitoring</h1>
+                <p>Periode: 1 - 14 September 2026 | Sumber Data: kualitas_daya_panel.csv</p>
+            </div>
+            <!-- Filter Kapal -->
+            <div class="filters" style="display: flex; gap: 10px; align-items: center;">
+                <label for="filterKapal" style="font-weight: bold;">Filter Kapal:</label>
+                <select id="filterKapal" onchange="applyFilter()" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                    <option value="all">Semua Kapal</option>
+                    <option value="1">KM Nusantara</option>
+                    <option value="2">KM Bahari</option>
+                    <option value="3">KM Samudra</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- KPI CARDS -->
+        <div class="kpi-grid">
+            <div class="kpi-card green">
+                <h3>Persentase Pembacaan Normal</h3>
+                <div class="value" id="kpi-normal">Loading...</div>
+                <div class="target">Target: 100%</div>
+            </div>
+            <div class="kpi-card red">
+                <h3>Jumlah Pembacaan Bahaya</h3>
+                <div class="value" id="kpi-bahaya">Loading...</div>
+                <div class="target">Target: 0</div>
+            </div>
+            <div class="kpi-card yellow">
+                <h3>Pembacaan THD > 5%</h3>
+                <div class="value" id="kpi-thd">Loading...</div>
+                <div class="target">Target: 0</div>
+            </div>
+            <div class="kpi-card red">
+                <h3>Tegangan Terendah</h3>
+                <div class="value" id="kpi-tegangan">Loading...</div>
+                <div class="target">Rentang Aman: 380V - 420V</div>
+            </div>
+        </div>
+
+        <!-- CHARTS -->
+        <div class="charts-grid">
+            <div class="chart-box">
+                <h4>Status Kualitas Daya per Kapal</h4>
+                <div class="canvas-container">
+                    <canvas id="chartKapal"></canvas>
+                </div>
+            </div>
+            <div class="chart-box">
+                <h4>Jumlah Pelanggaran Parameter</h4>
+                <div class="canvas-container">
+                    <canvas id="chartPelanggaran"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- TABEL DETAIL (Tambahan Baru) -->
+        <div class="chart-box" style="margin-top: 24px;">
+            <h4>Tabel Detail Pembacaan (Status Bahaya)</h4>
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 14px; text-align: left;">
+                    <thead>
+                        <tr style="background-color: #f7fafc; border-bottom: 2px solid #e2e8f0;">
+                            <th style="padding: 12px;">Waktu</th>
+                            <th style="padding: 12px;">Kapal</th>
+                            <th style="padding: 12px;">Tegangan (V)</th>
+                            <th style="padding: 12px;">Frekuensi (Hz)</th>
+                            <th style="padding: 12px;">Arus (A)</th>
+                            <th style="padding: 12px;">THD (%)</th>
+                            <th style="padding: 12px;">Faktor Daya</th>
+                            <th style="padding: 12px;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelDetail">
+                        <tr><td colspan="8" style="text-align: center; padding: 20px;">Loading data...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Memanggil file JavaScript -->
+    <script src="js/main.js"></script>
+</body>
+</html>
