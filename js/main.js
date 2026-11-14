@@ -22,7 +22,7 @@ function loadAllData(kapalId) {
 
 // 1. Fetch KPI
 function fetchKPI(kapalId) {
-    fetch(`${API_BASE_URL}/kpi.php?kapal=${kapalId}`)
+    fetch(`${API_BASE_URL}/kpi.js?kapal=${kapalId}`)
         .then(res => res.json())
         .then(data => {
             document.getElementById('kpi-normal').innerText = `${data.persentase_normal}%`;
@@ -34,7 +34,7 @@ function fetchKPI(kapalId) {
 
 // 2. Fetch Charts
 function fetchCharts(kapalId) {
-    fetch(`${API_BASE_URL}/charts.php?kapal=${kapalId}`)
+    fetch(`${API_BASE_URL}/charts.js?kapal=${kapalId}`)
         .then(res => res.json())
         .then(data => {
             renderStackedBar(data.status_per_kapal);
@@ -44,7 +44,7 @@ function fetchCharts(kapalId) {
 
 // 3. Fetch Tabel Detail
 function fetchTable(kapalId) {
-    fetch(`${API_BASE_URL}/table.php?kapal=${kapalId}`)
+    fetch(`${API_BASE_URL}/table.js?kapal=${kapalId}`)
         .then(res => res.json())
         .then(data => {
             const tbody = document.getElementById('tabelDetail');
