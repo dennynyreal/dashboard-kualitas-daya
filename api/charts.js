@@ -4,14 +4,23 @@ module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
 
-    const { kapal } = req.query;
-    let whereClause = "";
+    const { kapal, tanggal } = req.query;
+    let whereClauses = [];
     let values = [];
+    let paramCount = 1;
 
     if (kapal && kapal !== 'all' && !isNaN(kapal)) {
-        whereClause = "WHERE e.ship_id = $1";
+        whereClauses.push(`e.ship_id = $${paramCount}`);
         values.push(parseInt(kapal));
+        paramCount++;
     }
+    if (tanggal) {
+        whereClauses.push(`DATE(e.waktu) = $${paramCount}`);
+        values.push(tanggal);
+        paramCount++;
+    }
+
+    let whereClause = whereClauses.length > 0 ? "WHERE " + whereClauses.join(" AND ") : "";
 
     try {
         // 1. Data Status per Kapal

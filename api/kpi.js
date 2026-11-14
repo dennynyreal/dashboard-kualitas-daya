@@ -6,14 +6,25 @@ module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
 
     // Menangkap parameter filter
-    const { kapal } = req.query;
-    let whereClause = "";
+    const { kapal, tanggal } = req.query;
+    let whereClauses = [];
     let values = [];
+    let paramCount = 1;
 
     if (kapal && kapal !== 'all' && !isNaN(kapal)) {
-        whereClause = "WHERE ship_id = $1";
+        whereClauses.push(`ship_id = $${paramCount}`);
         values.push(parseInt(kapal));
+        paramCount++;
     }
+    if (tanggal) {
+        // Mencari data pada tanggal tersebut (mengabaikan jam)
+        whereClauses.push(`DATE(waktu) = $${paramCount}`);
+        values.push(tanggal);
+        paramCount++;
+    }
+
+    let whereClause = whereClauses.length > 0 ? "WHERE " + whereClauses.join(" AND ") : "";
+    
 
     try {
         // 1. Persentase Normal

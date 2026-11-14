@@ -4,14 +4,23 @@ module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
 
-    const { kapal } = req.query;
-    let whereClause = "WHERE e.status = 'Bahaya'";
+    const { kapal, tanggal } = req.query;
+    let whereClauses = ["e.status = 'Bahaya'"]; // Wajib Bahaya
     let values = [];
+    let paramCount = 1;
 
     if (kapal && kapal !== 'all' && !isNaN(kapal)) {
-        whereClause += " AND e.ship_id = $1";
+        whereClauses.push(`e.ship_id = $${paramCount}`);
         values.push(parseInt(kapal));
+        paramCount++;
     }
+    if (tanggal) {
+        whereClauses.push(`DATE(e.waktu) = $${paramCount}`);
+        values.push(tanggal);
+        paramCount++;
+    }
+
+    let whereClause = "WHERE " + whereClauses.join(" AND ");
 
     try {
         const query = `
