@@ -14,14 +14,14 @@ module.exports = async (req, res) => {
     }
 
     try {
-        // A. Status per Kapal
+        // 1. Data Status per Kapal
         const queryKapal = `
             SELECT s.nama_kapal, e.status, COUNT(*) as jumlah 
             FROM energy_readings e 
             JOIN ships s ON e.ship_id = s.id
             ${whereClause} 
             GROUP BY s.nama_kapal, e.status 
-            ORDER BY s.id, e.status
+            ORDER BY s.nama_kapal
         `;
         const resKapal = await pool.query(queryKapal, values);
         
@@ -38,10 +38,11 @@ module.exports = async (req, res) => {
             }
         });
 
-        // B. Pelanggaran Parameter
-        const qT = await pool.query(`SELECT COUNT(*) as t FROM energy_readings e ${whereClause} ${whereClause ? "AND" : "WHERE"} ABS(tegangan_v - 400) > 20`, values);
-        const qF = await pool.query(`SELECT COUNT(*) as f FROM energy_readings e ${whereClause} ${whereClause ? "AND" : "WHERE"} ABS(frekuensi_hz - 50) > 0.5`, values);
-        const qH = await pool.query(`SELECT COUNT(*) as h FROM energy_readings e ${whereClause} ${whereClause ? "AND" : "WHERE"} thd_persen > 5`, values);
+        // 2. Data Pelanggaran Parameter
+        // Query terpisah agar lebih aman dari error concatenation string
+        const qT = await pool.query("SELECT COUNT(*) as t FROM energy_readings WHERE ABS(tegangan_v - 400) > 20");
+        const qF = await pool.query("SELECT COUNT(*) as f FROM energy_readings WHERE ABS(frekuensi_hz - 50) > 0.5");
+        const qH = await pool.query("SELECT COUNT(*) as h FROM energy_readings WHERE thd_persen > 5");
 
         res.status(200).json({
             status_per_kapal: chartKapal,
@@ -53,7 +54,7 @@ module.exports = async (req, res) => {
         });
 
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        console.error("Error di charts.js:", error);
+        res.status(500).json({ error: error.message }); // Mengirim pesan error asli agar mudah dilacak
     }
 };
