@@ -60,7 +60,8 @@
         </div>
 
         <!-- CHARTS -->
-        <div class="charts-grid">
+                <!-- CHARTS ROW 1 -->
+        <div class="charts-grid" style="grid-template-columns: 1fr 1fr 1fr;">
             <div class="chart-box">
                 <h4>Status Kualitas Daya per Kapal</h4>
                 <div class="canvas-container">
@@ -71,6 +72,13 @@
                 <h4>Jumlah Pelanggaran Parameter</h4>
                 <div class="canvas-container">
                     <canvas id="chartPelanggaran"></canvas>
+                </div>
+            </div>
+            <!-- TAMBAHAN SCATTER PLOT -->
+            <div class="chart-box">
+                <h4>Hubungan Arus (A) vs THD (%)</h4>
+                <div class="canvas-container">
+                    <canvas id="chartScatter"></canvas>
                 </div>
             </div>
         </div>

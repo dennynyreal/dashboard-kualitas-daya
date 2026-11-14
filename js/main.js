@@ -2,6 +2,7 @@
 const API_BASE_URL = '/api'; // Untuk Vercel
 let chartKapalInstance = null;
 let chartPelanggaranInstance = null;
+let chartScatterInstance = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     loadAllData();
@@ -19,9 +20,11 @@ function resetTanggal() {
 function loadAllData() {
     const kapalId = document.getElementById('filterKapal').value;
     const tanggal = document.getElementById('filterTanggal').value; 
+    
     fetchKPI(kapalId, tanggal);
     fetchCharts(kapalId, tanggal);
     fetchTable(kapalId, tanggal);
+    fetchScatter(kapalId, tanggal); // <-- TAMBAHKAN INI
 }
 
 function fetchKPI(kapalId, tanggal) {
@@ -120,5 +123,61 @@ function renderHorizontalBar(data) {
             datasets: [{ label: 'Jumlah', data: [data.thd, data.tegangan, data.frekuensi], backgroundColor: ['#ecc94b', '#e53e3e', '#e53e3e'] }]
         },
         options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, scales: { x: { beginAtZero: true } } }
+    });
+}
+
+// 4. Fetch dan Render Scatter Plot
+function fetchScatter(kapalId, tanggal) {
+    let url = `${API_BASE_URL}/scatter?kapal=${kapalId}`;
+    if (tanggal) url += `&tanggal=${tanggal}`;
+
+    fetch(url)
+        .then(res => res.json())
+        .then(data => {
+            renderScatter(data);
+        })
+        .catch(error => console.error('Error fetching Scatter:', error));
+}
+
+function renderScatter(data) {
+    const ctx = document.getElementById('chartScatter').getContext('2d');
+    if (chartScatterInstance) chartScatterInstance.destroy();
+
+    // Memisahkan data berdasarkan kapal untuk diberi warna berbeda
+    const kapalNames = ['KM Nusantara', 'KM Bahari', 'KM Samudra'];
+    const colors = { 'KM Nusantara': '#38a169', 'KM Bahari': '#ecc94b', 'KM Samudra': '#e53e3e' };
+    
+    const datasets = kapalNames.map(kapal => {
+        const filteredData = data.filter(d => d.nama_kapal === kapal);
+        return {
+            label: kapal,
+            data: filteredData.map(d => ({ x: parseFloat(d.arus_a), y: parseFloat(d.thd_persen) })),
+            backgroundColor: colors[kapal],
+            pointRadius: 4,
+            pointHoverRadius: 6
+        };
+    });
+
+    chartScatterInstance = new Chart(ctx, {
+        type: 'scatter',
+        data: { datasets: datasets },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: { title: { display: true, text: 'Arus (A)' }, beginAtZero: false },
+                y: { title: { display: true, text: 'THD (%)' }, beginAtZero: true }
+            },
+            plugins: {
+                legend: { position: 'bottom' },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.dataset.label}: Arus ${context.parsed.x} A, THD ${context.parsed.y}%`;
+                        }
+                    }
+                }
+            }
+        }
     });
 }
