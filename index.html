@@ -1,4 +1,3 @@
-<!-- index.php -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -7,34 +6,40 @@
     <title>Dashboard Kualitas Daya - Skenario C</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" type="image/png" href="favicon.png">
+    
+    <!-- Library Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<!-- TAMBAHKAN BARIS INI UNTUK HEATMAP -->
-<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-matrix@2.0.1/dist/chartjs-chart-matrix.min.js"></script>
+    <!-- Library Heatmap Matrix -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-matrix@2.0.1/dist/chartjs-chart-matrix.min.js"></script>
 </head>
 <body>
 
     <div class="dashboard-container">
         <!-- HEADER & FILTER -->
         <div class="header">
-            <div>
+            <div class="header-title">
                 <h1>Main Switchboard Power Quality Monitoring</h1>
                 <p>Periode: 1 - 14 September 2026 | Sumber Data: kualitas_daya_panel.csv</p>
             </div>
-            <!-- Filter Kapal -->
-<div class="filters" style="display: flex; gap: 10px; align-items: center;">
-    <label for="filterKapal" style="font-weight: bold;">Kapal:</label>
-    <select id="filterKapal" onchange="applyFilter()" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
-        <option value="all">Semua Kapal</option>
-        <option value="1">KM Nusantara</option>
-        <option value="2">KM Bahari</option>
-        <option value="3">KM Samudra</option>
-    </select>
+            
+            <!-- Filter Kapal & Tanggal -->
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="filterKapal">Kapal:</label>
+                    <select id="filterKapal" onchange="applyFilter()">
+                        <option value="all">Semua Kapal</option>
+                        <option value="1">KM Nusantara</option>
+                        <option value="2">KM Bahari</option>
+                        <option value="3">KM Samudra</option>
+                    </select>
+                </div>
 
-    <!-- TAMBAHAN FILTER TANGGAL -->
-    <label for="filterTanggal" style="font-weight: bold; margin-left: 15px;">Tanggal:</label>
-    <input type="date" id="filterTanggal" onchange="applyFilter()" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
-    <button onclick="resetTanggal()" style="padding: 8px 12px; background-color: #e2e8f0; border: none; border-radius: 4px; cursor: pointer;">Reset</button>
-</div>
+                <div class="filter-group">
+                    <label for="filterTanggal">Tanggal:</label>
+                    <input type="date" id="filterTanggal" onchange="applyFilter()">
+                    <button onclick="resetTanggal()" class="btn-reset">Reset</button>
+                </div>
+            </div>
         </div>
 
         <!-- KPI CARDS -->
@@ -61,9 +66,8 @@
             </div>
         </div>
 
-        <!-- CHARTS -->
-                <!-- CHARTS ROW 1 -->
-        <div class="charts-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+        <!-- CHARTS ROW 1 -->
+        <div class="charts-grid">
             <div class="chart-box">
                 <h4>Status Kualitas Daya per Kapal</h4>
                 <div class="canvas-container">
@@ -76,7 +80,7 @@
                     <canvas id="chartPelanggaran"></canvas>
                 </div>
             </div>
-            <!-- TAMBAHAN SCATTER PLOT -->
+            <!-- SCATTER PLOT -->
             <div class="chart-box">
                 <h4>Hubungan Arus (A) vs THD (%)</h4>
                 <div class="canvas-container">
@@ -84,31 +88,31 @@
                 </div>
             </div>
         </div>
-                <!-- TAMBAHAN HEATMAP -->
-        <div class="chart-box" style="margin-top: 24px;">
+
+        <!-- HEATMAP -->
+        <div class="chart-box chart-full-width">
             <h4>Heatmap Waktu Kejadian Tidak Normal (Tanggal vs Jam)</h4>
-            <div class="canvas-container" style="height: 400px;">
+            <div class="canvas-container heatmap-container">
                 <canvas id="chartHeatmap"></canvas>
             </div>
-            <p style="text-align: center; font-size: 12px; color: #666; margin-top: 10px;">Warna merah menandakan penumpukan kejadian abnormal.</p>
+            <p class="chart-footer-text">Warna merah menandakan penumpukan kejadian abnormal.</p>
         </div>
 
-
-        <!-- TABEL DETAIL (Tambahan Baru) -->
-        <div class="chart-box" style="margin-top: 24px;">
+        <!-- TABEL DETAIL -->
+        <div class="chart-box chart-full-width">
             <h4>Tabel Detail Pembacaan (Status Bahaya)</h4>
-            <div style="overflow-x: auto;">
-                <table style="width: 100%; border-collapse: collapse; font-size: 14px; text-align: left;">
+            <div class="table-responsive">
+                <table>
                     <thead>
-                        <tr style="background-color: #f7fafc; border-bottom: 2px solid #e2e8f0;">
-                            <th style="padding: 12px;">Waktu</th>
-                            <th style="padding: 12px;">Kapal</th>
-                            <th style="padding: 12px;">Tegangan (V)</th>
-                            <th style="padding: 12px;">Frekuensi (Hz)</th>
-                            <th style="padding: 12px;">Arus (A)</th>
-                            <th style="padding: 12px;">THD (%)</th>
-                            <th style="padding: 12px;">Faktor Daya</th>
-                            <th style="padding: 12px;">Status</th>
+                        <tr>
+                            <th>Waktu</th>
+                            <th>Kapal</th>
+                            <th>Tegangan (V)</th>
+                            <th>Frekuensi (Hz)</th>
+                            <th>Arus (A)</th>
+                            <th>THD (%)</th>
+                            <th>Faktor Daya</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody id="tabelDetail">
