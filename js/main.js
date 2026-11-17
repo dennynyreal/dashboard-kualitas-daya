@@ -36,6 +36,9 @@ function loadAllData() {
     fetchHeatmap(kapalId, tanggal); 
 }
 
+// ==========================================
+// 1. FETCH & RENDER KPI
+// ==========================================
 function fetchKPI(kapalId, tanggal) {
     let url = `${API_BASE_URL}/kpi?kapal=${kapalId}`;
     if (tanggal) url += `&tanggal=${tanggal}`;
@@ -43,7 +46,6 @@ function fetchKPI(kapalId, tanggal) {
     fetch(url)
         .then(res => res.json())
         .then(data => {
-            // Hanya menampilkan angka, label teks diatur oleh HTML
             document.getElementById('kpi-normal').innerText = `${data.persentase_normal}%`;
             document.getElementById('kpi-bahaya').innerText = data.jumlah_bahaya; 
             document.getElementById('kpi-thd').innerText = data.jumlah_thd_gt_5;
@@ -52,6 +54,9 @@ function fetchKPI(kapalId, tanggal) {
         .catch(error => console.error('Error fetching KPI:', error));
 }
 
+// ==========================================
+// 2. FETCH & RENDER CHARTS (Stacked & Horizontal)
+// ==========================================
 function fetchCharts(kapalId, tanggal) {
     let url = `${API_BASE_URL}/charts?kapal=${kapalId}`;
     if (tanggal) url += `&tanggal=${tanggal}`;
@@ -65,41 +70,6 @@ function fetchCharts(kapalId, tanggal) {
         .catch(error => console.error('Error fetching Charts:', error));
 }
 
-function fetchTable(kapalId, tanggal) {
-    let url = `${API_BASE_URL}/table?kapal=${kapalId}`;
-    if (tanggal) url += `&tanggal=${tanggal}`;
-
-    fetch(url)
-        .then(res => res.json())
-        .then(data => {
-            const tbody = document.getElementById('tabelDetail');
-            tbody.innerHTML = ''; 
-
-            if (data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px;">Tidak ada data Status Bahaya untuk filter ini.</td></tr>';
-                return;
-            }
-
-            data.forEach(row => {
-                const tr = document.createElement('tr');
-                tr.classList.add('danger-row'); // Menggunakan class CSS, bukan inline style
-                tr.innerHTML = `
-                    <td>${row.waktu}</td>
-                    <td style="font-weight: 700;">${row.nama_kapal}</td>
-                    <td>${row.tegangan_v}</td>
-                    <td>${row.frekuensi_hz}</td>
-                    <td>${row.arus_a}</td>
-                    <td>${row.thd_persen}</td>
-                    <td>${row.faktor_daya}</td>
-                    <td style="font-weight: 700;">${row.status}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        })
-        .catch(error => console.error('Error fetching Table:', error));
-}
-
-// 1. Render Stacked Bar (Palet Modernize)
 function renderStackedBar(data) {
     if (!data) return; 
     const ctx = document.getElementById('chartKapal').getContext('2d');
@@ -119,9 +89,9 @@ function renderStackedBar(data) {
         data: { 
             labels: labels, 
             datasets: [
-                { label: 'Normal', data: datasetNormal, backgroundColor: '#5D87FF', borderRadius: 4 }, // Biru Primer
-                { label: 'Peringatan', data: datasetPeringatan, backgroundColor: '#FFAE1F', borderRadius: 4 }, // Kuning
-                { label: 'Bahaya', data: datasetBahaya, backgroundColor: '#FA896B', borderRadius: 4 } // Salmon/Merah
+                { label: 'Normal', data: datasetNormal, backgroundColor: '#5D87FF', borderRadius: 4 },
+                { label: 'Peringatan', data: datasetPeringatan, backgroundColor: '#FFAE1F', borderRadius: 4 },
+                { label: 'Bahaya', data: datasetBahaya, backgroundColor: '#FA896B', borderRadius: 4 }
             ]
         },
         options: { 
@@ -138,7 +108,6 @@ function renderStackedBar(data) {
     });
 }
 
-// 2. Render Horizontal Bar (Palet Modernize)
 function renderHorizontalBar(data) {
     const ctx = document.getElementById('chartPelanggaran').getContext('2d');
     if (chartPelanggaranInstance) chartPelanggaranInstance.destroy();
@@ -162,20 +131,68 @@ function renderHorizontalBar(data) {
                 x: { beginAtZero: true },
                 y: { grid: { display: false } }
             },
-            plugins: {
-                legend: { display: false } // Sembunyikan legenda karena warnanya sudah jelas
-            }
+            plugins: { legend: { display: false } }
         }
     });
 }
 
-// 3. Render Scatter Plot (Palet Modernize)
+// ==========================================
+// 3. FETCH & RENDER TABEL DETAIL
+// ==========================================
+function fetchTable(kapalId, tanggal) {
+    let url = `${API_BASE_URL}/table?kapal=${kapalId}`;
+    if (tanggal) url += `&tanggal=${tanggal}`;
+
+    fetch(url)
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.getElementById('tabelDetail');
+            tbody.innerHTML = ''; 
+
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px;">Tidak ada data Status Bahaya untuk filter ini.</td></tr>';
+                return;
+            }
+
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.classList.add('danger-row'); 
+                tr.innerHTML = `
+                    <td>${row.waktu}</td>
+                    <td style="font-weight: 700;">${row.nama_kapal}</td>
+                    <td>${row.tegangan_v}</td>
+                    <td>${row.frekuensi_hz}</td>
+                    <td>${row.arus_a}</td>
+                    <td>${row.thd_persen}</td>
+                    <td>${row.faktor_daya}</td>
+                    <td style="font-weight: 700;">${row.status}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        })
+        .catch(error => console.error('Error fetching Table:', error));
+}
+
+// ==========================================
+// 4. FETCH & RENDER SCATTER PLOT
+// ==========================================
+function fetchScatter(kapalId, tanggal) {
+    let url = `${API_BASE_URL}/scatter?kapal=${kapalId}`;
+    if (tanggal) url += `&tanggal=${tanggal}`;
+
+    fetch(url)
+        .then(res => res.json())
+        .then(data => {
+            renderScatter(data);
+        })
+        .catch(error => console.error('Error fetching Scatter:', error));
+}
+
 function renderScatter(data) {
     const ctx = document.getElementById('chartScatter').getContext('2d');
     if (chartScatterInstance) chartScatterInstance.destroy();
 
     const kapalNames = ['KM Nusantara', 'KM Bahari', 'KM Samudra'];
-    // Warna titik disesuaikan dengan tema
     const colors = { 'KM Nusantara': '#5D87FF', 'KM Bahari': '#49BEFF', 'KM Samudra': '#FA896B' };
     
     const datasets = kapalNames.map(kapal => {
@@ -202,7 +219,7 @@ function renderScatter(data) {
             plugins: {
                 legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8 } },
                 tooltip: {
-                    backgroundColor: 'rgba(42, 53, 71, 0.9)', // Warna tooltip gelap khas Modernize
+                    backgroundColor: 'rgba(42, 53, 71, 0.9)',
                     padding: 10,
                     cornerRadius: 4,
                     callbacks: {
@@ -216,7 +233,21 @@ function renderScatter(data) {
     });
 }
 
-// 4. Render Heatmap (Palet Modernize)
+// ==========================================
+// 5. FETCH & RENDER HEATMAP
+// ==========================================
+function fetchHeatmap(kapalId, tanggal) {
+    let url = `${API_BASE_URL}/heatmap?kapal=${kapalId}`;
+    if (tanggal) url += `&tanggal=${tanggal}`;
+
+    fetch(url)
+        .then(res => res.json())
+        .then(data => {
+            renderHeatmap(data);
+        })
+        .catch(error => console.error('Error fetching Heatmap:', error));
+}
+
 function renderHeatmap(data) {
     const ctx = document.getElementById('chartHeatmap').getContext('2d');
     if (chartHeatmapInstance) chartHeatmapInstance.destroy();
@@ -241,11 +272,10 @@ function renderHeatmap(data) {
                 backgroundColor(c) {
                     const value = c.dataset.data[c.dataIndex].v;
                     const alpha = (value / maxVal);
-                    // Warna merah salmon transparan (Modernize)
                     return `rgba(250, 137, 107, ${alpha})`; 
                 },
                 borderColor: '#FFFFFF',
-                borderWidth: 2, // Jarak antar kotak lebih tegas ala Modernize
+                borderWidth: 2,
                 borderRadius: 4,
                 width: ({chart}) => (chart.chartArea || {}).width / uniqueDates.length - 2,
                 height: ({chart}) => (chart.chartArea || {}).height / 24 - 2
