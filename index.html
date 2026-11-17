@@ -3,127 +3,151 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Kualitas Daya - Skenario C</title>
+    <title>Dashboard Kualitas Daya - Modernize Style</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" type="image/png" href="favicon.png">
     
-    <!-- Gunakan Font Google yang kompatibel dengan GDS (Inter) -->
+    <!-- Font Google: Plus Jakarta Sans (Khas Modernize) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
+    <!-- Library Chart.js & Matrix -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-matrix@2.0.1/dist/chartjs-chart-matrix.min.js"></script>
 </head>
 <body>
 
-    <div class="dashboard-container">
-        <!-- HEADER BERGAYA KONTROL PANEL -->
-        <div class="header">
-            <div class="header-title">
-                <h1>MAIN SWITCHBOARD POWER QUALITY</h1>
-                <p>Periode: 1 - 14 September 2026 &nbsp;|&nbsp; Sumber Data: kualitas_daya_panel.csv &nbsp;|&nbsp; Tim 3 D3PE3C</p>
+    <!-- TOP NAVIGATION BAR -->
+    <header class="top-navbar">
+        <div class="nav-brand">
+            <div class="logo-box"></div>
+            <h2>Modernize</h2>
+        </div>
+        
+        <div class="nav-filters">
+            <div class="filter-item">
+                <select id="filterKapal" onchange="applyFilter()">
+                    <option value="all">Semua Kapal</option>
+                    <option value="1">KM Nusantara</option>
+                    <option value="2">KM Bahari</option>
+                    <option value="3">KM Samudra</option>
+                </select>
+            </div>
+            <div class="filter-item">
+                <input type="date" id="filterTanggal" onchange="applyFilter()">
+            </div>
+            <button onclick="resetTanggal()" class="btn-primary">Reset</button>
+            
+            <div class="profile-icon">
+                <img src="https://i.pravatar.cc/150?img=11" alt="User">
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-container">
+        
+        <!-- PAGE HEADER -->
+        <div class="page-header">
+            <h1>Power Quality Dashboard</h1>
+            <p>Periode: 1 - 14 September 2026 | Sumber Data: kualitas_daya_panel.csv</p>
+        </div>
+
+        <!-- KPI CARDS -->
+        <div class="kpi-grid">
+            <div class="card kpi-card">
+                <div class="kpi-icon bg-light-blue">📊</div>
+                <div class="kpi-info">
+                    <h3>Persentase Normal</h3>
+                    <div class="value" id="kpi-normal">Loading...</div>
+                    <div class="target">Target: 100%</div>
+                </div>
             </div>
             
-            <!-- Filter Kapal & Tanggal -->
-            <div class="filters">
-                <div class="filter-group">
-                    <label for="filterKapal">Kapal</label>
-                    <select id="filterKapal" onchange="applyFilter()">
-                        <option value="all">Semua Kapal</option>
-                        <option value="1">KM Nusantara</option>
-                        <option value="2">KM Bahari</option>
-                        <option value="3">KM Samudra</option>
-                    </select>
+            <div class="card kpi-card">
+                <div class="kpi-icon bg-light-red">🚨</div>
+                <div class="kpi-info">
+                    <h3>Kejadian Bahaya</h3>
+                    <div class="value text-danger" id="kpi-bahaya">Loading...</div>
+                    <div class="target">Target: 0</div>
                 </div>
-
-                <div class="filter-group">
-                    <label for="filterTanggal">Tanggal</label>
-                    <input type="date" id="filterTanggal" onchange="applyFilter()">
+            </div>
+            
+            <div class="card kpi-card">
+                <div class="kpi-icon bg-light-yellow">⚡</div>
+                <div class="kpi-info">
+                    <h3>Pelanggaran THD</h3>
+                    <div class="value" id="kpi-thd">Loading...</div>
+                    <div class="target">Sampel > 5%</div>
                 </div>
-                <button onclick="resetTanggal()" class="btn-reset">RESET</button>
+            </div>
+            
+            <div class="card kpi-card">
+                <div class="kpi-icon bg-light-green">🔋</div>
+                <div class="kpi-info">
+                    <h3>Tegangan Terendah</h3>
+                    <div class="value" id="kpi-tegangan">Loading...</div>
+                    <div class="target">Batas Aman: 380V</div>
+                </div>
             </div>
         </div>
 
-        <!-- KPI CARDS (Perbaikan Satuan & Kontras) -->
-        <div class="kpi-grid">
-            <div class="kpi-card green">
-                <h3>PERSENTASE NORMAL</h3>
-                <div class="value" id="kpi-normal">Loading...</div>
-                <div class="target">Target: 100% (Dari Total Sampel)</div>
-            </div>
-            <div class="kpi-card red">
-                <h3>KEJADIAN BAHAYA</h3>
-                <div class="value" id="kpi-bahaya">Loading...</div>
-                <div class="target">Target: 0 Insiden Kritis</div>
-            </div>
-            <div class="kpi-card yellow">
-                <h3>PELANGGARAN THD</h3>
-                <div class="value" id="kpi-thd">Loading...</div>
-                <div class="target">Sampel THD > 5%</div>
-            </div>
-            <div class="kpi-card red">
-                <h3>TEGANGAN TERENDAH</h3>
-                <div class="value" id="kpi-tegangan">Loading...</div>
-                <div class="target">Batas Aman: 380V - 420V</div>
-            </div>
-        </div>
-
-        <!-- CHARTS ROW -->
-        <div class="charts-grid">
-            <div class="chart-box">
+        <!-- CHARTS ROW 1 -->
+        <div class="charts-grid-3">
+            <div class="card chart-box">
                 <h4>Status Kualitas Daya per Kapal</h4>
                 <div class="canvas-container">
                     <canvas id="chartKapal"></canvas>
                 </div>
             </div>
-            <div class="chart-box">
-                <h4>Parameter Pelanggaran Ambang</h4>
+            
+            <div class="card chart-box">
+                <h4>Parameter Pelanggaran</h4>
                 <div class="canvas-container">
                     <canvas id="chartPelanggaran"></canvas>
                 </div>
             </div>
-            <div class="chart-box">
-                <h4>Hubungan Arus (A) vs THD (%)</h4>
+            
+            <div class="card chart-box">
+                <h4>Hubungan Arus vs THD</h4>
                 <div class="canvas-container">
                     <canvas id="chartScatter"></canvas>
                 </div>
             </div>
         </div>
 
-        <!-- HEATMAP (Catatan: GDS menggunakan Pivot Table) -->
-        <div class="chart-box chart-full-width">
-            <h4>Heatmap Waktu Kejadian Abnormal (Tanggal vs Jam)</h4>
-            <div class="canvas-container heatmap-container">
-                <canvas id="chartHeatmap"></canvas>
+        <!-- CHARTS ROW 2 -->
+        <div class="charts-grid-2">
+            <div class="card chart-box">
+                <h4>Heatmap Waktu Kejadian Abnormal</h4>
+                <div class="canvas-container heatmap-container">
+                    <canvas id="chartHeatmap"></canvas>
+                </div>
             </div>
-            <p class="chart-footer-text">Warna merah pekat menandakan penumpukan kejadian abnormal pada jam tersebut.</p>
+            
+            <div class="card chart-box">
+                <h4>Tabel Detail (Status Bahaya)</h4>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Waktu</th>
+                                <th>Kapal</th>
+                                <th>Tegangan</th>
+                                <th>Frekuensi</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelDetail">
+                            <tr><td colspan="5" style="text-align: center; padding: 20px;">Loading data...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
-        <!-- TABEL DETAIL (Perbaikan Ukuran & Kontras) -->
-        <div class="chart-box chart-full-width">
-            <h4>Log Pembacaan Status Bahaya (Kritis)</h4>
-            <div class="table-responsive">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Waktu</th>
-                            <th>Kapal</th>
-                            <th>Tegangan (V)</th>
-                            <th>Frekuensi (Hz)</th>
-                            <th>Arus (A)</th>
-                            <th>THD (%)</th>
-                            <th>Faktor Daya</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabelDetail">
-                        <tr><td colspan="8" style="text-align: center; padding: 20px;">Loading data...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+    </main>
 
     <script src="js/main.js"></script>
 </body>
