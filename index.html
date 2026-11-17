@@ -143,36 +143,35 @@
             </div>
         </div>
 
-        <!-- CHARTS ROW 2 (Heatmap & Tabel) -->
-        <div class="charts-grid-2">
-            <div class="card chart-box">
-                <h4>Heatmap Waktu Kejadian Abnormal</h4>
-                <div class="canvas-container heatmap-container">
-                    <canvas id="chartHeatmap"></canvas>
-                </div>
+        <!-- CHARTS ROW 2 (Heatmap Full Width) -->
+        <div class="card chart-box" style="margin-bottom: 24px;">
+            <h4>Heatmap Waktu Kejadian Abnormal</h4>
+            <div class="canvas-container heatmap-container">
+                <canvas id="chartHeatmap"></canvas>
             </div>
-            
-            <div class="card chart-box">
-                <h4>Tabel Detail (Status Bahaya)</h4>
-                <div class="table-responsive" style="max-height: 380px; overflow-y: auto;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Waktu</th>
-                                <th>Kapal</th>
-                                <th>Tegangan (V)</th>
-                                <th>Frekuensi (Hz)</th>
-                                <th>Arus (A)</th>
-                                <th>THD (%)</th>
-                                <th>F. Daya</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabelDetail">
-                            <tr><td colspan="8" style="text-align: center; padding: 20px;">Loading data...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
+        </div>
+
+        <!-- CHARTS ROW 3 (Tabel Full Width) -->
+        <div class="card chart-box">
+            <h4>Tabel Detail (Status Bahaya)</h4>
+            <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Waktu</th>
+                            <th>Kapal</th>
+                            <th>Tegangan (V)</th>
+                            <th>Frekuensi (Hz)</th>
+                            <th>Arus (A)</th>
+                            <th>THD (%)</th>
+                            <th>F. Daya</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelDetail">
+                        <tr><td colspan="8" style="text-align: center; padding: 20px;">Loading data...</td></tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
