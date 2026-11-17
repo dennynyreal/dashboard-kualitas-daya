@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Kualitas Daya - Modernize Style</title>
+    <title>elec3Cal - Power Quality Dashboard</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" type="image/png" href="favicon.png">
     
@@ -21,8 +21,18 @@
     <!-- TOP NAVIGATION BAR -->
     <header class="top-navbar">
         <div class="nav-brand">
-            <div class="logo-box"></div>
-            <h2>Modernize</h2>
+            <!-- LOGO BARU: elec3Cal (Petir + Gradien Modernize) -->
+            <svg class="logo-svg" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="40" height="40" rx="10" fill="url(#paint0_linear)"/>
+                <path d="M22.5 8L11 22.5H19.5L17.5 32L29 17.5H20.5L22.5 8Z" fill="white" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+                <defs>
+                    <linearGradient id="paint0_linear" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#5D87FF"/>
+                        <stop offset="1" stop-color="#49BEFF"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+            <h2>elec3Cal</h2>
         </div>
         
         <div class="nav-filters">
@@ -39,9 +49,7 @@
             </div>
             <button onclick="resetTanggal()" class="btn-primary">Reset</button>
             
-            <div class="profile-icon">
-                <img src="https://i.pravatar.cc/150?img=11" alt="User">
-            </div>
+            <!-- Profile Icon DIHAPUS sesuai permintaan -->
         </div>
     </header>
 

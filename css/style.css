@@ -34,7 +34,7 @@ body {
 }
 
 /* =========================================
-   TOP NAVIGATION BAR
+   TOP NAVIGATION BAR & BRAND
    ========================================= */
 .top-navbar {
     background: #FFFFFF;
@@ -56,17 +56,17 @@ body {
     gap: 12px;
 }
 
-.logo-box {
-    width: 32px;
-    height: 32px;
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    border-radius: 8px;
+/* Styling untuk Logo SVG baru */
+.logo-svg {
+    width: 38px;
+    height: 38px;
 }
 
 .nav-brand h2 {
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 800;
     color: var(--text-dark);
+    letter-spacing: -0.5px;
 }
 
 .nav-filters {
@@ -110,15 +110,6 @@ body {
 
 .btn-primary:hover {
     background: #4572e8;
-}
-
-.profile-icon img {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid var(--border-color);
-    cursor: pointer;
 }
 
 /* =========================================
@@ -319,7 +310,6 @@ tbody tr.danger-row {
         width: 100%;
     }
     
-    .profile-icon { display: none; }
     .main-container { padding: 15px; }
     
     .kpi-grid, 
