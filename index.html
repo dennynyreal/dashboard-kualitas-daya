@@ -7,25 +7,28 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" type="image/png" href="favicon.png">
     
-    <!-- Library Chart.js -->
+    <!-- Gunakan Font Google yang kompatibel dengan GDS (Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Library Heatmap Matrix -->
     <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-matrix@2.0.1/dist/chartjs-chart-matrix.min.js"></script>
 </head>
 <body>
 
     <div class="dashboard-container">
-        <!-- HEADER & FILTER -->
+        <!-- HEADER BERGAYA KONTROL PANEL -->
         <div class="header">
             <div class="header-title">
-                <h1>Main Switchboard Power Quality Monitoring</h1>
-                <p>Periode: 1 - 14 September 2026 | Sumber Data: kualitas_daya_panel.csv</p>
+                <h1>MAIN SWITCHBOARD POWER QUALITY</h1>
+                <p>Periode: 1 - 14 September 2026 &nbsp;|&nbsp; Sumber Data: kualitas_daya_panel.csv &nbsp;|&nbsp; Tim 3 D3PE3C</p>
             </div>
             
             <!-- Filter Kapal & Tanggal -->
             <div class="filters">
                 <div class="filter-group">
-                    <label for="filterKapal">Kapal:</label>
+                    <label for="filterKapal">Kapal</label>
                     <select id="filterKapal" onchange="applyFilter()">
                         <option value="all">Semua Kapal</option>
                         <option value="1">KM Nusantara</option>
@@ -35,38 +38,38 @@
                 </div>
 
                 <div class="filter-group">
-                    <label for="filterTanggal">Tanggal:</label>
+                    <label for="filterTanggal">Tanggal</label>
                     <input type="date" id="filterTanggal" onchange="applyFilter()">
-                    <button onclick="resetTanggal()" class="btn-reset">Reset</button>
                 </div>
+                <button onclick="resetTanggal()" class="btn-reset">RESET</button>
             </div>
         </div>
 
-        <!-- KPI CARDS -->
+        <!-- KPI CARDS (Perbaikan Satuan & Kontras) -->
         <div class="kpi-grid">
             <div class="kpi-card green">
-                <h3>Persentase Pembacaan Normal</h3>
+                <h3>PERSENTASE NORMAL</h3>
                 <div class="value" id="kpi-normal">Loading...</div>
-                <div class="target">Target: 100%</div>
+                <div class="target">Target: 100% (Dari Total Sampel)</div>
             </div>
             <div class="kpi-card red">
-                <h3>Jumlah Pembacaan Bahaya</h3>
+                <h3>KEJADIAN BAHAYA</h3>
                 <div class="value" id="kpi-bahaya">Loading...</div>
-                <div class="target">Target: 0</div>
+                <div class="target">Target: 0 Insiden Kritis</div>
             </div>
             <div class="kpi-card yellow">
-                <h3>Pembacaan THD > 5%</h3>
+                <h3>PELANGGARAN THD</h3>
                 <div class="value" id="kpi-thd">Loading...</div>
-                <div class="target">Target: 0</div>
+                <div class="target">Sampel THD > 5%</div>
             </div>
             <div class="kpi-card red">
-                <h3>Tegangan Terendah</h3>
+                <h3>TEGANGAN TERENDAH</h3>
                 <div class="value" id="kpi-tegangan">Loading...</div>
-                <div class="target">Rentang Aman: 380V - 420V</div>
+                <div class="target">Batas Aman: 380V - 420V</div>
             </div>
         </div>
 
-        <!-- CHARTS ROW 1 -->
+        <!-- CHARTS ROW -->
         <div class="charts-grid">
             <div class="chart-box">
                 <h4>Status Kualitas Daya per Kapal</h4>
@@ -75,12 +78,11 @@
                 </div>
             </div>
             <div class="chart-box">
-                <h4>Jumlah Pelanggaran Parameter</h4>
+                <h4>Parameter Pelanggaran Ambang</h4>
                 <div class="canvas-container">
                     <canvas id="chartPelanggaran"></canvas>
                 </div>
             </div>
-            <!-- SCATTER PLOT -->
             <div class="chart-box">
                 <h4>Hubungan Arus (A) vs THD (%)</h4>
                 <div class="canvas-container">
@@ -89,18 +91,18 @@
             </div>
         </div>
 
-        <!-- HEATMAP -->
+        <!-- HEATMAP (Catatan: GDS menggunakan Pivot Table) -->
         <div class="chart-box chart-full-width">
-            <h4>Heatmap Waktu Kejadian Tidak Normal (Tanggal vs Jam)</h4>
+            <h4>Heatmap Waktu Kejadian Abnormal (Tanggal vs Jam)</h4>
             <div class="canvas-container heatmap-container">
                 <canvas id="chartHeatmap"></canvas>
             </div>
-            <p class="chart-footer-text">Warna merah menandakan penumpukan kejadian abnormal.</p>
+            <p class="chart-footer-text">Warna merah pekat menandakan penumpukan kejadian abnormal pada jam tersebut.</p>
         </div>
 
-        <!-- TABEL DETAIL -->
+        <!-- TABEL DETAIL (Perbaikan Ukuran & Kontras) -->
         <div class="chart-box chart-full-width">
-            <h4>Tabel Detail Pembacaan (Status Bahaya)</h4>
+            <h4>Log Pembacaan Status Bahaya (Kritis)</h4>
             <div class="table-responsive">
                 <table>
                     <thead>
@@ -123,7 +125,6 @@
         </div>
     </div>
 
-    <!-- Memanggil file JavaScript -->
     <script src="js/main.js"></script>
 </body>
 </html>
