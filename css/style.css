@@ -30,6 +30,7 @@ body {
     background-color: var(--bg-body); 
     color: var(--text-dark); 
     min-height: 100vh;
+    overflow-x: hidden;
 }
 
 /* =========================================
@@ -45,6 +46,8 @@ body {
     position: sticky;
     top: 0;
     z-index: 100;
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
 .nav-brand {
@@ -70,6 +73,7 @@ body {
     display: flex;
     align-items: center;
     gap: 15px;
+    flex-wrap: wrap;
 }
 
 .filter-item select, 
@@ -143,17 +147,15 @@ body {
     font-weight: 500;
 }
 
-/* Card Base Style */
 .card {
     background: var(--bg-card);
     border-radius: var(--radius);
     box-shadow: var(--shadow);
     padding: 24px;
-    transition: transform 0.2s;
 }
 
 /* =========================================
-   KPI GRID
+   KPI GRID & ICONS
    ========================================= */
 .kpi-grid {
     display: grid;
@@ -164,49 +166,53 @@ body {
 
 .kpi-card {
     display: flex;
-    align-items: flex-start;
-    gap: 16px;
+    align-items: center; 
+    gap: 18px;
 }
 
 .kpi-icon {
-    width: 52px;
-    height: 52px;
+    width: 56px;
+    height: 56px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24px;
     flex-shrink: 0;
 }
 
-.bg-light-blue { background: #ECF2FF; }
-.bg-light-red { background: #FDECEA; }
-.bg-light-yellow { background: #FEF5E5; }
-.bg-light-green { background: #E6FFFA; }
+.kpi-icon svg {
+    width: 26px;
+    height: 26px;
+}
+
+.bg-light-blue { background: #ECF2FF; color: #5D87FF; }
+.bg-light-red { background: #FDECEA; color: #FA896B; }
+.bg-light-yellow { background: #FEF5E5; color: #FFAE1F; }
+.bg-light-green { background: #E6FFFA; color: #13DEB9; }
 
 .kpi-info h3 {
     font-size: 14px;
     color: var(--text-muted);
-    font-weight: 600;
-    margin-bottom: 8px;
+    font-weight: 500;
+    margin-bottom: 6px;
 }
 
 .kpi-info .value {
     font-size: 28px;
-    font-weight: 800;
+    font-weight: 700;
     color: var(--text-dark);
-    line-height: 1;
+    line-height: 1.1;
 }
 
 .kpi-info .value.text-danger {
-    color: var(--danger);
+    color: #2A3547; 
 }
 
 .kpi-info .target {
     font-size: 13px;
     color: var(--text-muted);
-    margin-top: 8px;
-    font-weight: 500;
+    margin-top: 6px;
+    font-weight: 400;
 }
 
 /* =========================================
@@ -214,14 +220,14 @@ body {
    ========================================= */
 .charts-grid-3 {
     display: grid;
-    grid-template-columns: 1.2fr 1fr 1.2fr;
+    grid-template-columns: repeat(3, 1fr);
     gap: 24px;
     margin-bottom: 24px;
 }
 
 .charts-grid-2 {
     display: grid;
-    grid-template-columns: 1.5fr 1fr;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
     gap: 24px;
     margin-bottom: 24px;
 }
@@ -242,7 +248,7 @@ body {
 }
 
 .heatmap-container {
-    height: 320px;
+    height: 400px; 
 }
 
 /* =========================================
@@ -250,11 +256,15 @@ body {
    ========================================= */
 .table-responsive {
     overflow-x: auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
+    min-width: 700px; 
 }
 
 th {
@@ -266,6 +276,10 @@ th {
     border-bottom: 1px solid var(--border-color);
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    background-color: #F8FAFC; 
+    position: sticky; 
+    top: 0;
+    z-index: 10;
 }
 
 td {
@@ -274,54 +288,54 @@ td {
     color: var(--text-dark);
     border-bottom: 1px solid var(--border-color);
     font-weight: 500;
+    white-space: nowrap; 
 }
 
-/* Modifikasi tabel saat JS me-render baris bahaya */
-tbody tr {
+tbody tr.danger-row {
     background-color: #FDECEA;
     color: #D32F2F;
     font-weight: 600;
 }
 
 /* =========================================
-   RESPONSIVE DESIGN
+   RESPONSIVE BREAKPOINTS
    ========================================= */
-@media (max-width: 1100px) {
-    .charts-grid-3, .charts-grid-2 { grid-template-columns: 1fr; }
+@media (max-width: 1024px) {
+    .charts-grid-3 { grid-template-columns: repeat(2, 1fr); }
+    .charts-grid-2 { grid-template-columns: 1fr; }
+    .main-container { padding: 20px; }
 }
 
 @media (max-width: 768px) {
     .top-navbar {
         flex-direction: column;
-        gap: 15px;
+        align-items: flex-start;
         padding: 15px;
     }
     
     .nav-filters {
         width: 100%;
-        flex-wrap: wrap;
-    }
-    
-    .filter-item {
-        flex-grow: 1;
+        flex-direction: column;
+        align-items: stretch;
     }
     
     .filter-item select, 
-    .filter-item input {
+    .filter-item input,
+    .btn-primary {
         width: 100%;
     }
     
-    .btn-primary {
-        flex-grow: 1;
-    }
-    
-    .profile-icon {
-        display: none; /* Sembunyikan foto profil di HP */
-    }
-
+    .profile-icon { display: none; }
     .main-container { padding: 15px; }
     
-    .canvas-container {
-        height: 240px;
+    .kpi-grid, 
+    .charts-grid-3, 
+    .charts-grid-2 { 
+        grid-template-columns: 1fr; 
+        gap: 15px;
     }
+    
+    .card { padding: 15px; }
+    .canvas-container { height: 240px; }
+    .heatmap-container { height: 300px; }
 }

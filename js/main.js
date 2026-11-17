@@ -1,12 +1,12 @@
 // js/main.js
 
-// Konfigurasi Global Chart.js (Tema Modernize)
+// Konfigurasi Global Chart.js
 Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
-Chart.defaults.color = '#7C8FAC'; // Warna teks abu-abu kebiruan
-Chart.defaults.scale.grid.color = '#EAEFF4'; // Warna garis kisi
-Chart.defaults.scale.grid.borderDash = [5, 5]; // Garis kisi putus-putus
+Chart.defaults.color = '#7C8FAC';
+Chart.defaults.scale.grid.color = '#EAEFF4';
+Chart.defaults.scale.grid.borderDash = [5, 5];
 
-const API_BASE_URL = '/api'; // Untuk Vercel
+const API_BASE_URL = '/api';
 let chartKapalInstance = null;
 let chartPelanggaranInstance = null;
 let chartScatterInstance = null;
@@ -37,7 +37,7 @@ function loadAllData() {
 }
 
 // ==========================================
-// 1. FETCH & RENDER KPI
+// 1. KPI
 // ==========================================
 function fetchKPI(kapalId, tanggal) {
     let url = `${API_BASE_URL}/kpi?kapal=${kapalId}`;
@@ -55,7 +55,7 @@ function fetchKPI(kapalId, tanggal) {
 }
 
 // ==========================================
-// 2. FETCH & RENDER CHARTS (Stacked & Horizontal)
+// 2. CHARTS (Stacked & Horizontal)
 // ==========================================
 function fetchCharts(kapalId, tanggal) {
     let url = `${API_BASE_URL}/charts?kapal=${kapalId}`;
@@ -137,7 +137,7 @@ function renderHorizontalBar(data) {
 }
 
 // ==========================================
-// 3. FETCH & RENDER TABEL DETAIL
+// 3. TABEL
 // ==========================================
 function fetchTable(kapalId, tanggal) {
     let url = `${API_BASE_URL}/table?kapal=${kapalId}`;
@@ -174,7 +174,7 @@ function fetchTable(kapalId, tanggal) {
 }
 
 // ==========================================
-// 4. FETCH & RENDER SCATTER PLOT
+// 4. SCATTER PLOT
 // ==========================================
 function fetchScatter(kapalId, tanggal) {
     let url = `${API_BASE_URL}/scatter?kapal=${kapalId}`;
@@ -234,7 +234,7 @@ function renderScatter(data) {
 }
 
 // ==========================================
-// 5. FETCH & RENDER HEATMAP
+// 5. HEATMAP
 // ==========================================
 function fetchHeatmap(kapalId, tanggal) {
     let url = `${API_BASE_URL}/heatmap?kapal=${kapalId}`;
@@ -252,11 +252,16 @@ function renderHeatmap(data) {
     const ctx = document.getElementById('chartHeatmap').getContext('2d');
     if (chartHeatmapInstance) chartHeatmapInstance.destroy();
 
-    const uniqueDates = [...new Set(data.map(d => d.tanggal))].sort();
+    const rawDates = [...new Set(data.map(d => d.tanggal))].sort();
+    const labelsX = rawDates.map(d => {
+        const parts = d.split('-');
+        return `${parts[2]}/${parts[1]}`; 
+    });
+
     const hours = Array.from({length: 24}, (_, i) => i.toString().padStart(2, '0') + ':00');
 
     const heatmapData = data.map(d => ({
-        x: uniqueDates.indexOf(d.tanggal),
+        x: rawDates.indexOf(d.tanggal),
         y: parseInt(d.jam),
         v: parseInt(d.jumlah)
     }));
@@ -277,7 +282,7 @@ function renderHeatmap(data) {
                 borderColor: '#FFFFFF',
                 borderWidth: 2,
                 borderRadius: 4,
-                width: ({chart}) => (chart.chartArea || {}).width / uniqueDates.length - 2,
+                width: ({chart}) => (chart.chartArea || {}).width / rawDates.length - 2,
                 height: ({chart}) => (chart.chartArea || {}).height / 24 - 2
             }]
         },
@@ -287,9 +292,14 @@ function renderHeatmap(data) {
             scales: {
                 x: {
                     type: 'category',
-                    labels: uniqueDates,
+                    labels: labelsX, 
                     title: { display: true, text: 'Tanggal', font: {weight: 'bold'} },
-                    grid: { display: false }
+                    grid: { display: false },
+                    ticks: {
+                        autoSkip: false, 
+                        maxRotation: 45, 
+                        minRotation: 45
+                    }
                 },
                 y: {
                     type: 'category',
@@ -306,7 +316,7 @@ function renderHeatmap(data) {
                         title: () => 'Detail Kejadian',
                         label: (context) => {
                             const v = context.raw.v;
-                            const tgl = uniqueDates[context.raw.x];
+                            const tgl = rawDates[context.raw.x]; 
                             const jam = hours[context.raw.y];
                             return `${tgl} jam ${jam}: ${v} kejadian abnormal`;
                         }
