@@ -56,20 +56,21 @@ body {
     gap: 12px;
 }
 
-/* Styling untuk Logo Gambar Baru */
-.logo-img {
-    width: 45px; /* Ukuran pas untuk navbar */
-    height: 45px;
-    object-fit: contain;
-    border-radius: 8px;
-    /* box-shadow: 0 2px 5px rgba(0,0,0,0.1); Opsional */
+/* Styling untuk Logo SVG Baru */
+.logo-svg {
+    width: 42px;
+    height: 42px;
+    filter: drop-shadow(0px 4px 6px rgba(93, 135, 255, 0.3)); 
 }
 
 .nav-brand h2 {
     font-size: 24px;
     font-weight: 800;
-    color: var(--text-dark);
     letter-spacing: -0.5px;
+    /* Gradasi teks agar serasi dengan logo */
+    background: linear-gradient(135deg, #2A3547 0%, #5D87FF 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .nav-filters {
